@@ -12,6 +12,8 @@
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
         <style>
         html, body, #map {
             width: 100%;
@@ -41,6 +43,31 @@
         <script src="data/Commune_1.js"></script>
         <script src="data/Etang_2.js"></script>
         <script>
+	// Ajout du contrôle de dessin à la carte
+	var drawnItems = new L.FeatureGroup();
+	map.addLayer(drawnItems);
+
+	var drawControl = new L.Control.Draw({
+    	position: 'topleft',
+    	draw: {
+        	polygon: true,
+        	polyline: true,
+        	rectangle: true,
+        	circle: true,
+        	marker: true,
+    	},
+    	edit: {
+        	featureGroup: drawnItems,
+        	remove: true
+    	}
+	});
+	map.addControl(drawControl);
+
+	// Gestion des événements pour capturer les objets dessinés
+	map.on(L.Draw.Event.CREATED, function (event) {
+    	var layer = event.layer;
+    	drawnItems.addLayer(layer);
+	});
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
         }).fitBounds([[47.117200265543374,1.2077295283753586],[47.943997134880846,2.6443096762112415]]);
